@@ -22,20 +22,6 @@ def lecture():
         return redirect(url_for('authentification'))
     return "<h2>Bravo, vous êtes authentifié</h2>"
 
-@app.route('/authentification', methods=['GET', 'POST'])
-def authentification():
-    if request.method == 'POST':
-        if request.form['username'] == 'admin' and request.form['password'] == 'password':
-            session['authentifie'] = True
-            session['role'] = 'admin'
-            return redirect(url_for('lecture'))
-        elif request.form['username'] == 'user' and request.form['password'] == '12345':
-            session['authentifie'] = True
-            session['role'] = 'user'
-            return redirect(url_for('ReadBDD'))
-        else:
-            return render_template('formulaire_authentification.html', error=True)
-    return render_template('formulaire_authentification.html', error=False)
 
 @app.route('/fiche_nom/<string:post_nom>')
 def ReadficheNom(post_nom):
