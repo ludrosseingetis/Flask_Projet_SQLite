@@ -68,7 +68,7 @@ def ReadBDD():
     conn.close()
     return render_template('read_data.html', data=data)
 
-@app.route('/enregistrer_client', methods=['GET'])
+@app.route('/enregistrer_client2', methods=['GET'])
 def formulaire_client():
     return render_template('formulaire.html')
 
