@@ -39,7 +39,8 @@ def authentification():
 
     return render_template('formulaire_authentification.html', error=False)
 
-@app.route('/fiche_nom/<int:post_nom>')
+@app.route('/fiche_nom/<string:post_nom>')
+@requires_user_auth
 def Readfiche(post_nom):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
