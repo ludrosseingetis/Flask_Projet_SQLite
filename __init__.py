@@ -1,9 +1,4 @@
-from flask import Flask, render_template_string, render_template, jsonify, request, redirect, url_for, session
-from flask import render_template
-from flask import json
-from urllib.request import urlopen
-from werkzeug.utils import secure_filename
-
+from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 
 app = Flask(__name__)
@@ -14,6 +9,7 @@ def est_authentifie():
 
 @app.route('/')
 def hello_world():
+    # Assurez-vous que 'hello.html' existe bien dans le dossier templates
     return render_template('hello.html')
 
 @app.route('/lecture')
@@ -37,7 +33,6 @@ def authentification():
             return render_template('formulaire_authentification.html', error=True)
     return render_template('formulaire_authentification.html', error=False)
 
-
 @app.route('/fiche_nom/<string:post_nom>')
 def ReadficheNom(post_nom):
     if not est_authentifie() or session.get('role') != 'user':
@@ -45,6 +40,8 @@ def ReadficheNom(post_nom):
 
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
+    # Attention: le LIKE est sensible à la casse selon la config SQLite, 
+    # pour être sûr on ajoute souvent des % autour du terme
     cursor.execute('SELECT * FROM clients WHERE nom LIKE ?', (post_nom,))
     data = cursor.fetchall()
     conn.close()
@@ -68,36 +65,26 @@ def ReadBDD():
     conn.close()
     return render_template('read_data.html', data=data)
 
-@app.route('/enregistrer_client2', methods=['GET'])
-def formulaire_client():
-    return render_template('formulaire.html')
+# --- C'est ici que la correction a été faite (fusion des routes GET et POST) ---
 
-@app.route('/enregistrer_client', methods=['POST'])
-def enregistrer_client():
-    nom = request.form['nom']
-    prenom = request.form['prenom']
+@app.route('/enregistrer_client', methods=['GET', 'POST'])
+def enregistrer_client_route():
+    # Si c'est un GET, on affiche le formulaire
+    if request.method == 'GET':
+        return render_template('formulaire.html')
+    
+    # Si c'est un POST, on traite les données
+    if request.method == 'POST':
+        nom = request.form['nom']
+        prenom = request.form['prenom']
 
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
-    conn.commit()
-    conn.close()
-    return redirect('/consultation/')
-
-@app.route('/enregistrer_client', methods=['POST'])
-def enregistrer_client():
-    nom = request.form['nom']
-    prenom = request.form['prenom']
-
-    # Connexion à la base de données
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-
-    # Exécution de la requête SQL pour insérer un nouveau client
-    cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
-    conn.commit()
-    conn.close()
-    return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        # Note: 1002938 est une valeur "en dur" pour created, à adapter si besoin
+        cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
+        conn.commit()
+        conn.close()
+        return redirect('/consultation/')
 
 if __name__ == "__main__":
   app.run(debug=True)
