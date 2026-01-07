@@ -28,7 +28,7 @@ def authentification():
         elif request.form['username'] == 'user' and request.form['password'] == '1234':
             session['authentifie'] = True
             session['role'] = 'user'
-            return redirect(url_for('ReadBDD'))
+            return redirect(url_for('fichenom/Dupont'))
         else:
             return render_template('formulaire_authentification.html', error=True)
     return render_template('formulaire_authentification.html', error=False)
