@@ -25,7 +25,7 @@ def authentification():
             session['authentifie'] = True
             session['role'] = 'admin'
             return redirect(url_for('lecture'))
-        elif request.form['username'] == 'user' and request.form['password'] == '12345':
+        elif request.form['username'] == 'user' and request.form['password'] == '1234':
             session['authentifie'] = True
             session['role'] = 'user'
             return redirect(url_for('ReadBDD'))
