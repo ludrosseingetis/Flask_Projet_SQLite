@@ -44,14 +44,13 @@ def authentification():
             return render_template('formulaire_authentification.html', error=True)
 
     return render_template('formulaire_authentification.html', error=False)
-    return render_template('formulaire_authentification.html', error=False)
     
 @app.route('/authentificationnom', methods=['GET', 'POST'])
 def authentificationnom():
     if request.method == 'POST':
         if request.form['username'] == 'admin' and request.form['password'] == 'password': 
             session['authentifie'] = True
-            return redirect(url_for('lecture'))
+            return redirect(url_for('/fiche_nom/Dupont'))
         else:
             return render_template('formulaire_authentification.html', error=True)
 
