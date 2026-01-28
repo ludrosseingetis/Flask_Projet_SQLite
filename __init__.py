@@ -65,7 +65,7 @@ def Readlivre(post_id):
     cursor.execute('DELETE * from livres WHERE id = ?', (post_id,))
     data = cursor.fetchall()
     conn.close()
-    return render_template('read_data.html', data=data)
+    return render_template('read_datastock.html', data=data)
 
 @app.route('/consultation/')
 def ReadBDD():
@@ -83,7 +83,7 @@ def Readstock():
     cursor.execute('SELECT * FROM livres;')
     data = cursor.fetchall()
     conn.close()
-    return render_template('read_data.html', data=data)
+    return render_template('read_datastock.html', data=data)
 
 
 @app.route('/enregistrer_client', methods=['GET', 'POST'])
