@@ -1,62 +1,77 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <title>Ma Bibliothèque</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Force le fond en noir pur au lieu du gris foncé par défaut de Bootstrap */
+        body {
+            background-color: #000000 !important;
+        }
+        /* Style monochrome pour les cartes */
+        .card {
+            background-color: #121212;
+            border: 1px solid #333;
+        }
+        .card-header {
+            background-color: #1a1a1a !important;
+            border-bottom: 1px solid #333;
+        }
+    </style>
 </head>
 <body class="container py-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-        <h1 class="text-primary">📚 Ma Bibliothèque</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+        <h1 class="text-white">📚 Ma Bibliothèque</h1>
         <div>
-            <a href="/consultation/" class="btn btn-outline-info me-2">👥 Gérer les Clients</a>
+            <a href="/consultation/" class="btn btn-outline-light me-2">👥 Gérer les Clients</a>
             
             {% if admin %}
-                <span class="badge bg-success me-2">Mode Admin</span>
-                <a href="/logout" class="btn btn-danger btn-sm">Déconnexion</a>
+                <span class="badge bg-light text-dark me-2">Mode Admin</span>
+                <a href="/logout" class="btn btn-outline-light btn-sm">Déconnexion</a>
             {% else %}
-                <a href="/authentification" class="btn btn-primary btn-sm">Connexion Admin</a>
+                <a href="/authentification" class="btn btn-light btn-sm">Connexion Admin</a>
             {% endif %}
         </div>
     </div>
 
-    <div class="card bg-light mb-4">
+    <div class="card mb-4">
         <div class="card-body">
             <form action="/" method="get" class="d-flex gap-2">
-                <input type="text" name="recherche" class="form-control" placeholder="Rechercher un titre ou un auteur...">
-                <button type="submit" class="btn btn-secondary">🔍 Rechercher</button>
+                <input type="text" name="recherche" class="form-control bg-dark text-white border-secondary" placeholder="Rechercher un titre ou un auteur...">
+                <button type="submit" class="btn btn-light">🔍 Rechercher</button>
                 <a href="/" class="btn btn-outline-secondary">Reset</a>
             </form>
         </div>
     </div>
 
     {% if admin %}
-    <div class="card border-primary mb-4">
-        <div class="card-header bg-primary text-white">Ajouter un nouveau livre</div>
+    <div class="card mb-4">
+        <div class="card-header text-white">Ajouter un nouveau livre</div>
         <div class="card-body">
             <form action="/ajouter_livre" method="post" class="row g-2 align-items-center">
                 <div class="col-md-4">
-                    <input type="text" name="titre" class="form-control" placeholder="Titre du livre" required>
+                    <input type="text" name="titre" class="form-control bg-dark text-white border-secondary" placeholder="Titre du livre" required>
                 </div>
                 <div class="col-md-4">
-                    <input type="text" name="auteur" class="form-control" placeholder="Auteur" required>
+                    <input type="text" name="auteur" class="form-control bg-dark text-white border-secondary" placeholder="Auteur" required>
                 </div>
                 <div class="col-md-3">
-                    <input type="text" name="genre" class="form-control" placeholder="Genre">
+                    <input type="text" name="genre" class="form-control bg-dark text-white border-secondary" placeholder="Genre">
                 </div>
                 <div class="col-md-1">
-                    <button type="submit" class="btn btn-success w-100">+</button>
+                    <button type="submit" class="btn btn-light w-100">+</button>
                 </div>
             </form>
         </div>
     </div>
     {% endif %}
 
-    <h3 class="mb-3">Liste des Ouvrages</h3>
+    <h3 class="mb-3 text-white">Liste des Ouvrages</h3>
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
-            <thead class="table-dark">
+        <table class="table table-dark table-hover align-middle border-secondary">
+            <thead>
                 <tr>
                     <th>Titre</th>
                     <th>Auteur</th>
@@ -70,31 +85,18 @@
                 <tr>
                     <td class="fw-bold">{{ livre['titre'] }}</td>
                     <td>{{ livre['auteur'] }}</td>
-                    <td><span class="badge bg-secondary">{{ livre['genre'] }}</span></td>
+                    <td><span class="badge border border-secondary text-light fw-normal">{{ livre['genre'] }}</span></td>
                     
                     <td>
-                        {% if livre['disponible'] == 1 %}
-                            <span class="badge bg-success">En Rayon</span>
-                        {% else %}
-                            <span class="badge bg-warning text-dark">Emprunté</span>
-                        {% endif %}
-                    </td>
+                  
+                   
 
                     <td>
-                        {% if livre['disponible'] == 1 %}
-                            <form action="/emprunter/{{ livre['id'] }}" method="post" class="d-flex align-items-center">
-                                <input type="number" name="id_client" placeholder="ID Client" class="form-control form-control-sm me-1" style="width: 80px;" required>
-                                <button type="submit" class="btn btn-sm btn-primary">Emprunter</button>
-                            </form>
-                        {% else %}
-                            <form action="/rendre/{{ livre['id'] }}" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-info text-white">Rendre</button>
-                            </form>
-                        {% endif %}
+                
 
                         {% if admin %}
                             <form action="/supprimer_livre/{{ livre['id'] }}" method="post" class="d-inline ms-2" onsubmit="return confirm('Supprimer ce livre ?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">X</button>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">X</button>
                             </form>
                         {% endif %}
                     </td>
