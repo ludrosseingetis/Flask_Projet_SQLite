@@ -83,7 +83,24 @@ def Readstock():
     data = cursor.fetchall()
     conn.close()
     return render_template('read_datastock.html', data=data)
+@app.route('/ajouter_livre', methods=['POST'])
+def ajouter_livre():
+    titre = request.form['titre']
+    auteur = request.form['auteur']
+    categorie = request.form['categorie']
+    
+    import time
+    created = int(time.time())
 
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO livres (created, titre, auteur, categorie) VALUES (?, ?, ?, ?)', 
+                   (created, titre, auteur, categorie))
+    conn.commit()
+    conn.close()
+    
+    # Une fois ajouté, on retourne sur la page de stock qui contient maintenant le formulaire et la liste
+    return redirect(url_for('Readstock'))
 
 @app.route('/enregistrer_client', methods=['GET', 'POST'])
 def enregistrer_client_route():
