@@ -51,7 +51,7 @@ def ajouter_livre():
 
     conn = get_db_connection()
     # On ajoute un livre (assure-toi que ta table a bien ces 3 colonnes)
-    conn.execute('INSERT INTO livres (titre, auteur, genre, disponible) VALUES (?, ?, ?, 1)', (titre, auteur, genre))
+    conn.execute('INSERT INTO livres (titre, auteur, catégorie) VALUES (?, ?, ?)', (titre, auteur, genre))
     conn.commit()
     conn.close()
     return redirect(url_for('hello_world'))
@@ -67,24 +67,6 @@ def supprimer_livre(id):
     conn.close()
     return redirect(url_for('hello_world'))
 
-@app.route('/emprunter/<int:id_livre>', methods=['POST'])
-def emprunter(id_livre):
-    id_client = request.form['id_client']
-    conn = get_db_connection()
-    # On passe disponible à 0 (Faux)
-    conn.execute('UPDATE livres SET disponible = 0 WHERE id = ?', (id_livre,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('hello_world'))
-
-@app.route('/rendre/<int:id_livre>', methods=['POST'])
-def rendre(id_livre):
-    conn = get_db_connection()
-    # On passe disponible à 1 (Vrai)
-    conn.execute('UPDATE livres SET disponible = 1 WHERE id = ?', (id_livre,))
-    conn.commit()
-    conn.close()
-    return redirect(url_for('hello_world'))
 
 # --- AUTHENTIFICATION ---
 
@@ -99,11 +81,6 @@ def authentification():
             return render_template('formulaire_authentification.html', error=True)
     return render_template('formulaire_authentification.html', error=False)
 
-@app.route('/logout')
-def logout():
-    session.pop('authentifie', None)
-    return redirect(url_for('hello_world'))
-
 # --- GESTION DES CLIENTS ---
 
 @app.route('/consultation/')
@@ -115,20 +92,6 @@ def ReadBDD():
     conn.close()
     return render_template('read_data.html', data=data)
 
-@app.route('/enregistrer_client', methods=['GET'])
-def formulaire_client():
-    return render_template('formulaire.html') 
-
-@app.route('/enregistrer_client', methods=['POST'])
-def enregistrer_client():
-    nom = request.form['nom']
-    prenom = request.form['prenom']
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
-    conn.commit()
-    conn.close()
-    return redirect('/consultation/')
 
 @app.route('/fiche_client/<int:post_id>')
 def Readfiche(post_id):
