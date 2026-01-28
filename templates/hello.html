@@ -1,16 +1,87 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page d'accueil</title>
+    <title>Accueil - Gestion Bibliothèque</title>
+    
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Prend toute la hauteur de l'écran */
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 90%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 2 colonnes */
+            gap: 20px;
+        }
+
+        .card {
+            display: block;
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .card:hover {
+            background-color: #0056b3;
+            transform: translateY(-5px); /* Petit effet de saut */
+        }
+
+        .card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+
+        .card p {
+            margin: 0;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenue sur la page d'accueil de la bibliothèque</h1>
-    <p>Cliquez <a href="stock">ici</a> pour gérer les stocks de livres.</p>
-     <p>Cliquez <a href="consultation">ici</a> pour gérer les utilisateurs.</p>
 
+    <div class="container">
+        <h1>📚 Gestion Bibliothèque</h1>
+        <p style="color: #666; margin-bottom: 30px;">Bienvenue dans votre espace d'administration.</p>
 
-    
+        <div class="menu-grid">
+            <a href="/stock/" class="card">
+                <h3>📦 Stocks</h3>
+                <p>Gérer les livres disponibles</p>
+            </a>
+
+            <a href="/consultation/" class="card">
+                <h3>👥 Clients</h3>
+                <p>Gérer les utilisateurs inscrits</p>
+            </a>
+        </div>
+    </div>
+
 </body>
 </html>
