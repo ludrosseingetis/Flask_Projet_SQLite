@@ -43,8 +43,7 @@ def ReadficheNom(post_nom):
 
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    # Attention: le LIKE est sensible à la casse selon la config SQLite, 
-    # pour être sûr on ajoute souvent des % autour du terme
+
     cursor.execute('SELECT * FROM clients WHERE nom LIKE ?', (post_nom,))
     data = cursor.fetchall()
     conn.close()
@@ -68,7 +67,6 @@ def ReadBDD():
     conn.close()
     return render_template('read_data.html', data=data)
 
-# --- C'est ici que la correction a été faite (fusion des routes GET et POST) ---
 
 @app.route('/enregistrer_client', methods=['GET', 'POST'])
 def enregistrer_client_route():
@@ -76,14 +74,12 @@ def enregistrer_client_route():
     if request.method == 'GET':
         return render_template('formulaire.html')
     
-    # Si c'est un POST, on traite les données
     if request.method == 'POST':
         nom = request.form['nom']
         prenom = request.form['prenom']
 
         conn = sqlite3.connect('database.db')
         cursor = conn.cursor()
-        # Note: 1002938 est une valeur "en dur" pour created, à adapter si besoin
         cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
         conn.commit()
         conn.close()
