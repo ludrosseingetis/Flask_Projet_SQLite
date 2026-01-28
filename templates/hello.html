@@ -5,11 +5,9 @@
     <title>Ma Bibliothèque</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Force le fond en noir pur au lieu du gris foncé par défaut de Bootstrap */
         body {
             background-color: #000000 !important;
         }
-        /* Style monochrome pour les cartes */
         .card {
             background-color: #121212;
             border: 1px solid #333;
@@ -23,16 +21,11 @@
 <body class="container py-4">
 
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
-        <h1 class="text-white">📚 Ma Bibliothèque</h1>
+        <h1 class="text-white"> Ma Bibliothèque</h1>
         <div>
-            <a href="/consultation/" class="btn btn-outline-light me-2">👥 Gérer les Clients</a>
+            <a href="/consultation/" class="btn btn-outline-light me-2"> Gérer les Clients</a>
             
-            {% if admin %}
-                <span class="badge bg-light text-dark me-2">Mode Admin</span>
-                <a href="/logout" class="btn btn-outline-light btn-sm">Déconnexion</a>
-            {% else %}
-                <a href="/authentification" class="btn btn-light btn-sm">Connexion Admin</a>
-            {% endif %}
+      
         </div>
     </div>
 
@@ -40,8 +33,7 @@
         <div class="card-body">
             <form action="/" method="get" class="d-flex gap-2">
                 <input type="text" name="recherche" class="form-control bg-dark text-white border-secondary" placeholder="Rechercher un titre ou un auteur...">
-                <button type="submit" class="btn btn-light">🔍 Rechercher</button>
-                <a href="/" class="btn btn-outline-secondary">Reset</a>
+                <button type="submit" class="btn btn-light"> Rechercher</button>
             </form>
         </div>
     </div>
