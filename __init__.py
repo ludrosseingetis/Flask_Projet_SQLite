@@ -65,7 +65,6 @@ def Readlivre(post_id):
     cursor.execute('DELETE from livres WHERE id = ?', (post_id,))
     data = cursor.fetchall()
     conn.close()
-return redirect(url_for('Readstock'))
 @app.route('/consultation/')
 def ReadBDD():
     conn = sqlite3.connect('database.db')
