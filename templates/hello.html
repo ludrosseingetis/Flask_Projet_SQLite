@@ -2,85 +2,110 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Gestion Bibliothèque</title>
-    
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Prend toute la hauteur de l'écran */
-            margin: 0;
-        }
-
-        .container {
-            text-align: center;
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 600px;
-            width: 90%;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 30px;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 colonnes */
-            gap: 20px;
-        }
-
-        .card {
-            display: block;
-            text-decoration: none;
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-            transition: transform 0.2s, background-color 0.2s;
-        }
-
-        .card:hover {
-            background-color: #0056b3;
-            transform: translateY(-5px); /* Petit effet de saut */
-        }
-
-        .card h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.2rem;
-        }
-
-        .card p {
-            margin: 0;
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-    </style>
+    <title>Ma Bibliothèque</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="container py-4">
 
-    <div class="container">
-        <h1>📚 Gestion Bibliothèque</h1>
-        <p style="color: #666; margin-bottom: 30px;">Bienvenue dans votre espace d'administration.</p>
-
-        <div class="menu-grid">
-            <a href="/stock/" class="card">
-                <h3>📦 Stocks</h3>
-                <p>Gérer les livres disponibles</p>
-            </a>
-
-            <a href="/consultation/" class="card">
-                <h3>👥 Clients</h3>
-                <p>Gérer les utilisateurs inscrits</p>
-            </a>
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <h1 class="text-primary">📚 Ma Bibliothèque</h1>
+        <div>
+            <a href="/consultation/" class="btn btn-outline-info me-2">👥 Gérer les Clients</a>
+            
+            {% if admin %}
+                <span class="badge bg-success me-2">Mode Admin</span>
+                <a href="/logout" class="btn btn-danger btn-sm">Déconnexion</a>
+            {% else %}
+                <a href="/authentification" class="btn btn-primary btn-sm">Connexion Admin</a>
+            {% endif %}
         </div>
+    </div>
+
+    <div class="card bg-light mb-4">
+        <div class="card-body">
+            <form action="/" method="get" class="d-flex gap-2">
+                <input type="text" name="recherche" class="form-control" placeholder="Rechercher un titre ou un auteur...">
+                <button type="submit" class="btn btn-secondary">🔍 Rechercher</button>
+                <a href="/" class="btn btn-outline-secondary">Reset</a>
+            </form>
+        </div>
+    </div>
+
+    {% if admin %}
+    <div class="card border-primary mb-4">
+        <div class="card-header bg-primary text-white">Ajouter un nouveau livre</div>
+        <div class="card-body">
+            <form action="/ajouter_livre" method="post" class="row g-2 align-items-center">
+                <div class="col-md-4">
+                    <input type="text" name="titre" class="form-control" placeholder="Titre du livre" required>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" name="auteur" class="form-control" placeholder="Auteur" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="genre" class="form-control" placeholder="Genre">
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-success w-100">+</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <h3 class="mb-3">Liste des Ouvrages</h3>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>Titre</th>
+                    <th>Auteur</th>
+                    <th>Genre</th>
+                    <th>État</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for livre in livres %}
+                <tr>
+                    <td class="fw-bold">{{ livre['titre'] }}</td>
+                    <td>{{ livre['auteur'] }}</td>
+                    <td><span class="badge bg-secondary">{{ livre['genre'] }}</span></td>
+                    
+                    <td>
+                        {% if livre['disponible'] == 1 %}
+                            <span class="badge bg-success">En Rayon</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Emprunté</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if livre['disponible'] == 1 %}
+                            <form action="/emprunter/{{ livre['id'] }}" method="post" class="d-flex align-items-center">
+                                <input type="number" name="id_client" placeholder="ID Client" class="form-control form-control-sm me-1" style="width: 80px;" required>
+                                <button type="submit" class="btn btn-sm btn-primary">Emprunter</button>
+                            </form>
+                        {% else %}
+                            <form action="/rendre/{{ livre['id'] }}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-info text-white">Rendre</button>
+                            </form>
+                        {% endif %}
+
+                        {% if admin %}
+                            <form action="/supprimer_livre/{{ livre['id'] }}" method="post" class="d-inline ms-2" onsubmit="return confirm('Supprimer ce livre ?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">X</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted">Aucun livre trouvé dans la bibliothèque.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
 </body>
