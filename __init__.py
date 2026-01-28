@@ -9,7 +9,6 @@ def est_authentifie():
 
 @app.route('/')
 def hello_world():
-    # Assurez-vous que 'hello.html' existe bien dans le dossier templates
     return render_template('hello.html')
 
 @app.route('/lecture')
