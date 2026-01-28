@@ -65,8 +65,9 @@ def ReadBDD():
     cursor.execute('SELECT * FROM clients;')
     data = cursor.fetchall()
     conn.close()
-    return render_template('read_data.html', data=data)
-    @app.route('/stock/')
+    return render_template('read_datastock.html', data=data)
+
+@app.route('/stock/')
 def Readstock():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
