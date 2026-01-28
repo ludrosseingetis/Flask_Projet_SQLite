@@ -63,7 +63,7 @@ def Readlivre(post_id):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute('DELETE from livres WHERE id = ?', (post_id,))
-    data = cursor.fetchall()
+    conn.commit()
     conn.close()
     return redirect(url_for('Readstock'))
 @app.route('/consultation/')
