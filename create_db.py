@@ -15,6 +15,10 @@ cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('LAMB
 cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('GAGNON', 'Nicolas', '456, Boulevard des Cerisiers, 69003 Lyon'))
 cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('DUBOIS', 'Charlotte', '789, Rue des Roses, 13005 Marseille'))
 cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('LEFEVRE', 'Thomas', '333, Rue de la Paix, 75002 Paris'))
+cur.execute("INSERT INTO livres (titre, auteur, catégorie) VALUES (?, ?, ?)",('Sherlock Holmes', 'Conan Doyle', 'Policier'))
+cur.execute("INSERT INTO livres (titre, auteur, catégorie) VALUES (?, ?, ?)",('La femme de ménage', 'Freidda McFaidden', 'Suspens'))
+cur.execute("INSERT INTO livres (titre, auteur, catégorie) VALUES (?, ?, ?)",('Harry Potter', 'J.K Rowling', 'Science-Fiction'))
+cur.execute("INSERT INTO livres (titre, auteur, catégorie) VALUES (?, ?, ?)",('Plus rien ne pourra me blesser', 'David Goggins', 'Auto-Biographie'))
 
 connection.commit()
 connection.close()
