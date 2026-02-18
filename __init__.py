@@ -97,43 +97,28 @@ def Readfiche(post_id):
     return render_template('read_data.html', data=data)
 
 # ==========================================
-# ROUTES TACHES (Sur BDD 2 + BDD 1)
+# ROUTES TACHES (Sur BDD 2 UNIQUEMENT)
 # ==========================================
 
 @app.route('/taches/')
 def ReadTaches():
-    # 1. Récupérer les Tâches depuis BDD 2
-    conn2 = get_db2_connection()
-    taches_rows = conn2.execute('SELECT * FROM taches').fetchall()
-    conn2.close()
-
-    # 2. Récupérer les Clients depuis BDD 1 (pour avoir les noms)
-    conn1 = get_db_connection()
-    clients_rows = conn1.execute('SELECT * FROM clients').fetchall()
-    conn1.close()
-
-    # 3. Fusionner les données manuellement (Jointure Python)
-    # On crée un dictionnaire pour trouver rapidement un client par son ID
-    clients_dict = {client['id']: client for client in clients_rows}
+    # On se connecte uniquement à la BDD 2
+    conn = get_db2_connection()
+    cursor = conn.cursor()
     
-    data_fusionnee = []
-    for tache in taches_rows:
-        # On convertit la ligne SQLite en dictionnaire pour pouvoir la modifier
-        tache_dict = dict(tache)
-        
-        # On cherche le client associé
-        client_associe = clients_dict.get(tache['id_client'])
-        
-        if client_associe:
-            tache_dict['nom'] = client_associe['nom']
-            tache_dict['prenom'] = client_associe['prenom']
-        else:
-            tache_dict['nom'] = "Client Inconnu"
-            tache_dict['prenom'] = ""
-            
-        data_fusionnee.append(tache_dict)
+    # On effectue une jointure SQL classique car les tables 'taches' et 'clients'
+    # sont supposées être toutes les deux dans database2.db
+    sql = """
+        SELECT taches.*, clients.nom, clients.prenom 
+        FROM taches 
+        JOIN clients ON taches.id_client = clients.id
+    """
     
-    return render_template('read_data.html', data=data_fusionnee)
+    cursor.execute(sql)
+    data = cursor.fetchall()
+    conn.close()
+    
+    return render_template('read_data.html', data=data)
 
 
 # ==========================================
