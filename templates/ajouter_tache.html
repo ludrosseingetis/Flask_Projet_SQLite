@@ -1,18 +1,26 @@
-<form action="{{ url_for('ajouter_tache') }}" method="POST">
-    <div style="margin-bottom: 10px;">
-        <label>Titre de la tâche :</label><br>
-        <input type="text" name="titre" required>
-    </div>
-
-    <div style="margin-bottom: 10px;">
-        <label>Description :</label><br>
-        <textarea name="description" required></textarea>
-    </div>
-
-    <div style="margin-bottom: 10px;">
-        <label>ID du Client (existant) :</label><br>
-        <input type="number" name="id_client" required>
-    </div>
-
-    <button type="submit">Enregistrer la tâche</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ajouter une tâche</title>
+</head>
+<body>
+    <h2>Créer une nouvelle tâche</h2>
+    <form action="{{ url_for('ajouter_tache') }}" method="POST">
+        <p>
+            <label>Titre de la tâche (Obligatoire) :</label><br>
+            <input type="text" name="titre" required>
+        </p>
+        <p>
+            <label>Description :</label><br>
+            <textarea name="description" required></textarea>
+        </p>
+        <p>
+            <label>ID du Client :</label><br>
+            <input type="number" name="id_client" required>
+        </p>
+        <button type="submit">Enregistrer la tâche</button>
+    </form>
+    <br>
+    <a href="{{ url_for('ReadTaches') }}">Retour à la liste</a>
+</body>
+</html>
