@@ -13,13 +13,7 @@ def get_db_connection():
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row # Permet d'utiliser livre['titre']
     return conn
-    
-    def get_db_connection2():
-    basedir = os.path.abspath(os.path.dirname(__file__))
-    db_path = os.path.join(basedir, 'database2.db')
-    conn = sqlite3.connect(db_path)
-    conn.row_factory = sqlite3.Row # Permet d'utiliser livre['titre']
-    return conn
+
 
 
 def est_authentifie():
@@ -110,15 +104,6 @@ def Readfiche(post_id):
     conn.close()
     return render_template('read_data.html', data=data)
 
-
-@app.route('/taches/')
-def ReadBDD():
-    conn = get_db_connection2()
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM clients;')
-    data = cursor.fetchall()
-    conn.close()
-    return render_template('read_data.html', data=data)
 
 
 
