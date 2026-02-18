@@ -120,32 +120,27 @@ def ReadTaches():
     
     return render_template('read_data.html', data=data)
 
-@app.route('/ajouter_tache', methods=['POST'])
+@app.route('/ajouter_tache', methods=['GET', 'POST'])
 def ajouter_tache():
-    # Sécurité : on vérifie si l'utilisateur est connecté
     if not est_authentifie():
         return redirect(url_for('authentification'))
-    
-    # Récupération des données du formulaire
-    description = request.form['description']
-    date_echeance = request.form['date_echeance']
-    id_client = request.form['id_client'] # L'ID du client associé
 
-    # Connexion à la BDD 2 (Tâches)
-    conn = get_db2_connection()
-    try:
-        conn.execute('''
-            INSERT INTO taches (description, date_echeance, id_client) 
-            VALUES (?, ?, ?)
-        ''', (description, date_echeance, id_client))
+    # Si l'utilisateur valide le formulaire
+    if request.method == 'POST':
+        description = request.form['description']
+        date_echeance = request.form['date_echeance']
+        id_client = request.form['id_client']
+
+        conn = get_db2_connection()
+        conn.execute('INSERT INTO taches (description, date_echeance, id_client) VALUES (?, ?, ?)', 
+                     (description, date_echeance, id_client))
         conn.commit()
-    except sqlite3.Error as e:
-        print(f"Erreur lors de l'ajout : {e}")
-    finally:
         conn.close()
-    
-    # Redirection vers la liste des tâches
-    return redirect(url_for('ReadTaches'))
+        return redirect(url_for('ReadTaches'))
+
+    # Si l'utilisateur arrive juste sur la page (GET)
+    # Tu dois créer un fichier 'ajouter_tache.html' avec ton formulaire
+    return render_template('ajouter_tache.html')
 
 
 # ==========================================
