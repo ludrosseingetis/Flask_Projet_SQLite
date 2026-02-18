@@ -129,15 +129,14 @@ def ajouter_tache():
         # Récupération des données du formulaire
         titre = request.form.get('titre')
         description = request.form.get('description')
-        id_client = request.form.get('id_client')
 
         conn = get_db2_connection()
         try:
             # On insère les données dans database2.db
             conn.execute('''
-                INSERT INTO taches (titre, description, id_client) 
-                VALUES (?, ?, ?)
-            ''', (titre, description, id_client))
+                INSERT INTO taches (titre, description) 
+                VALUES (?, ?)
+            ''', (titre, description))
             conn.commit()
         except Exception as e:
             print(f"Erreur lors de l'ajout : {e}")
