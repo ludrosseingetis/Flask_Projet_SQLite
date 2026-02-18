@@ -1,18 +1,122 @@
-<table border="1">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Titre</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in data %}
-        <tr>
-            <td>{{ row['id_tache'] }}</td>
-            <td>{{ row['titre'] }}</td>
-            <td>{{ row['description'] }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Liste des Tâches</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* Style général de la page */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Style du tableau */
+.table-container {
+    width: 90%;
+    max-width: 1000px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse; /* Enlève les doubles bordures */
+    margin: 10px 0;
+}
+
+/* En-tête du tableau */
+thead tr {
+    background-color: #3498db;
+    color: white;
+    text-align: left;
+    font-weight: bold;
+}
+
+th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Alternance de couleurs pour les lignes (Zebra effect) */
+tbody tr:nth-of-type(even) {
+    background-color: #f9f9f9;
+}
+
+/* Effet de survol */
+tbody tr:hover {
+    background-color: #f1f1f1;
+    transition: 0.3s;
+}
+
+/* Style spécifique pour l'ID */
+td:first-child {
+    font-weight: bold;
+    color: #7f8c8d;
+    width: 50px;
+}
+
+/* Style pour le titre */
+td:nth-child(2) {
+    color: #2980b9;
+    font-weight: 600;
+}
+
+/* Bouton de retour ou d'ajout */
+.btn {
+    display: inline-block;
+    background: #27ae60;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-top: 20px;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #219150;
+}
+    </style>
+</head>
+<body>
+
+    <h2>Mes Tâches</h2>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Titre</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    <td>#{{ row['id_tache'] }}</td>
+                    <td>{{ row['titre'] }}</td>
+                    <td>{{ row['description'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <a href="{{ url_for('ajouter_tache') }}" class="btn">＋ Ajouter une nouvelle tâche</a>
+
+</body>
+</html>
