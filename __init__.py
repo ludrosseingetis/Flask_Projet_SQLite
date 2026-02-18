@@ -118,7 +118,7 @@ def ReadTaches():
     data = cursor.fetchall()
     conn.close()
     
-    return render_template('read_data.html', data=data)
+    return render_template('read_data2.html', data=data)
 
 @app.route('/ajouter_tache', methods=['GET', 'POST'])
 def ajouter_tache():
