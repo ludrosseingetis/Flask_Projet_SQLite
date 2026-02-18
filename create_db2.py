@@ -12,10 +12,5 @@ if not db_exists:
     with open('schema2.sql') as f:
         connection.executescript(f.read())
     print("Base de données initialisée.")
-
-cur = connection.cursor()
-
-cur.execute("INSERT INTO clients (nom, prenom) VALUES (?, ?)", ('DUPONT', 'Emilie'))
-
 connection.commit()
 connection.close()
