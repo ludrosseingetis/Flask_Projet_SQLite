@@ -9,7 +9,7 @@ app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 # GESTION DES CONNEXIONS BDD
 # ==========================================
 
-# 1. Connexion pour la BDD des LIVRES (database.db)
+# 1. Connexion BDD PRINCIPALE (Livres + Clients)
 def get_db_connection():
     basedir = os.path.abspath(os.path.dirname(__file__))
     db_path = os.path.join(basedir, 'database.db')
@@ -17,10 +17,10 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
-# 2. Connexion pour la BDD des CLIENTS & TACHES (database2.db)
+# 2. Connexion BDD SECONDAIRE (Tâches uniquement)
 def get_db2_connection():
     basedir = os.path.abspath(os.path.dirname(__file__))
-    db_path = os.path.join(basedir, 'database2.db') # Cible la nouvelle BDD
+    db_path = os.path.join(basedir, 'database2.db')
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
@@ -29,13 +29,12 @@ def est_authentifie():
     return session.get('authentifie')
 
 # ==========================================
-# ROUTES LIVRES (database.db)
+# ROUTES LIVRES (Sur BDD 1)
 # ==========================================
 
 @app.route('/')
 def hello_world():
     conn = get_db_connection()
-    
     query = request.args.get('recherche')
     if query:
         sql = "SELECT * FROM livres WHERE titre LIKE ? OR auteur LIKE ?"
@@ -44,7 +43,6 @@ def hello_world():
     else:
         cursor = conn.execute('SELECT * FROM livres')
         livres = cursor.fetchall()
-    
     conn.close()
     return render_template('hello.html', livres=livres, admin=est_authentifie())
 
@@ -75,14 +73,13 @@ def supprimer_livre(id):
     return redirect(url_for('hello_world'))
 
 # ==========================================
-# ROUTES CLIENTS & TACHES (database2.db)
+# ROUTES CLIENTS (Sur BDD 1)
 # ==========================================
 
-# NOTE : J'ai modifié cette route pour qu'elle utilise get_db2_connection()
-# car 'clients' est maintenant dans database2.db
 @app.route('/consultation/')
 def ReadBDD():
-    conn = get_db2_connection() # Utilisation de la BDD 2
+    # Les clients sont maintenant dans la BDD 1
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM clients;')
     data = cursor.fetchall()
@@ -91,36 +88,52 @@ def ReadBDD():
 
 @app.route('/fiche_client/<int:post_id>')
 def Readfiche(post_id):
-    conn = get_db2_connection() # Utilisation de la BDD 2
+    # Les clients sont maintenant dans la BDD 1
+    conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM clients WHERE id = ?', (post_id,))
     data = cursor.fetchall()
     conn.close()
     return render_template('read_data.html', data=data)
 
-# --- NOUVELLE ROUTE TACHES ---
+# ==========================================
+# ROUTES TACHES (Sur BDD 2 + BDD 1)
+# ==========================================
+
 @app.route('/taches/')
 def ReadTaches():
-    conn = get_db2_connection()
-    cursor = conn.cursor()
-    
-    # On fait une jointure pour afficher le Nom du client à côté de la tâche
-    # Si tu veux juste les tâches sans le nom du client, utilise : "SELECT * FROM taches"
-    sql = """
-        SELECT taches.*, clients.nom, clients.prenom 
-        FROM taches 
-        JOIN clients ON taches.id_client = clients.id
-    """
-    
-    # Si la jointure plante car il n'y a pas encore de clients liés, utilise simplement :
-    # sql = "SELECT * FROM taches"
+    # 1. Récupérer les Tâches depuis BDD 2
+    conn2 = get_db2_connection()
+    taches_rows = conn2.execute('SELECT * FROM taches').fetchall()
+    conn2.close()
 
-    cursor.execute(sql)
-    data = cursor.fetchall()
-    conn.close()
+    # 2. Récupérer les Clients depuis BDD 1 (pour avoir les noms)
+    conn1 = get_db_connection()
+    clients_rows = conn1.execute('SELECT * FROM clients').fetchall()
+    conn1.close()
+
+    # 3. Fusionner les données manuellement (Jointure Python)
+    # On crée un dictionnaire pour trouver rapidement un client par son ID
+    clients_dict = {client['id']: client for client in clients_rows}
     
-    # Tu devras créer un fichier 'read_taches.html' ou réutiliser 'read_data.html'
-    return render_template('read_data.html', data=data)
+    data_fusionnee = []
+    for tache in taches_rows:
+        # On convertit la ligne SQLite en dictionnaire pour pouvoir la modifier
+        tache_dict = dict(tache)
+        
+        # On cherche le client associé
+        client_associe = clients_dict.get(tache['id_client'])
+        
+        if client_associe:
+            tache_dict['nom'] = client_associe['nom']
+            tache_dict['prenom'] = client_associe['prenom']
+        else:
+            tache_dict['nom'] = "Client Inconnu"
+            tache_dict['prenom'] = ""
+            
+        data_fusionnee.append(tache_dict)
+    
+    return render_template('read_data.html', data=data_fusionnee)
 
 
 # ==========================================
