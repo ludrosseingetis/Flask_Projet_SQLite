@@ -29,6 +29,32 @@ def est_authentifie():
     return session.get('authentifie')
 
 # ==========================================
+# UTILITAIRE : INITIALISATION BDD PROJET
+# ==========================================
+# Lance cette route une fois (http://localhost:5000/init_projet_db) 
+# pour créer la table avec les nouvelles colonnes (date, terminé, etc.)
+@app.route('/init_projet_db')
+def init_projet_db():
+    conn = get_db2_connection()
+    # On supprime l'ancienne table pour la recréer proprement avec les nouveaux champs
+    conn.execute('DROP TABLE IF EXISTS taches')
+    conn.execute('''
+        CREATE TABLE taches (
+            id_tache INTEGER PRIMARY KEY AUTOINCREMENT,
+            created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            titre TEXT NOT NULL,
+            description TEXT NOT NULL,
+            date_echeance DATE,
+            est_terminee BOOLEAN DEFAULT 0,
+            id_client INTEGER,
+            FOREIGN KEY(id_client) REFERENCES clients(id)
+        )
+    ''')
+    conn.commit()
+    conn.close()
+    return "Base de données Tâches (BDD2) mise à jour pour le projet ! (Table 'taches' recréée)"
+
+# ==========================================
 # ROUTES LIVRES (Sur BDD 1)
 # ==========================================
 
@@ -97,28 +123,76 @@ def Readfiche(post_id):
     return render_template('read_data.html', data=data)
 
 # ==========================================
-# ROUTES TACHES (Sur BDD 2 UNIQUEMENT)
+# ROUTES PROJET TACHES (Sur BDD 2)
 # ==========================================
 
+# 1. Afficher la liste des tâches (Accueil du module Tâches)
 @app.route('/taches/')
 def ReadTaches():
-    # On se connecte uniquement à la BDD 2
     conn = get_db2_connection()
     cursor = conn.cursor()
     
-    # On effectue une jointure SQL classique car les tables 'taches' et 'clients'
-    # sont supposées être toutes les deux dans database2.db
+    # On récupère les tâches avec les infos clients (LEFT JOIN pour garder les tâches même sans client)
     sql = """
         SELECT taches.*, clients.nom, clients.prenom 
         FROM taches 
-        JOIN clients ON taches.id_client = clients.id
+        LEFT JOIN clients ON taches.id_client = clients.id
+        ORDER BY taches.est_terminee ASC, taches.date_echeance ASC
     """
     
     cursor.execute(sql)
     data = cursor.fetchall()
     conn.close()
     
+    # Tu devras mettre à jour ton template HTML pour afficher 
+    # 'date_echeance' et un bouton pour 'terminer' ou 'supprimer'
     return render_template('read_data.html', data=data)
+
+# 2. Ajouter une tâche (Formulaire + Traitement)
+@app.route('/taches/ajouter', methods=['GET', 'POST'])
+def ajouter_tache():
+    # Si c'est le formulaire (GET)
+    if request.method == 'GET':
+        # On a besoin de la liste des clients pour le menu déroulant
+        # Attention : Les clients sont dans la BDD 1 !
+        conn_clients = get_db_connection() # BDD 1
+        clients = conn_clients.execute('SELECT * FROM clients').fetchall()
+        conn_clients.close()
+        return render_template('ajouter_tache.html', clients=clients) # Créer ce template !
+
+    # Si c'est l'envoi (POST)
+    titre = request.form['titre']
+    description = request.form['description']
+    date_echeance = request.form['date_echeance']
+    id_client = request.form.get('id_client') # Peut être None si pas sélectionné
+
+    conn = get_db2_connection() # BDD 2
+    conn.execute('''
+        INSERT INTO taches (titre, description, date_echeance, est_terminee, id_client) 
+        VALUES (?, ?, ?, 0, ?)
+    ''', (titre, description, date_echeance, id_client))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('ReadTaches'))
+
+# 3. Marquer une tâche comme terminée
+@app.route('/taches/terminer/<int:id_tache>')
+def terminer_tache(id_tache):
+    conn = get_db2_connection()
+    # On inverse le statut (si 0 devient 1, si 1 devient 0) ou on met juste à 1
+    conn.execute('UPDATE taches SET est_terminee = 1 WHERE id_tache = ?', (id_tache,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('ReadTaches'))
+
+# 4. Supprimer une tâche
+@app.route('/taches/supprimer/<int:id_tache>')
+def supprimer_tache(id_tache):
+    conn = get_db2_connection()
+    conn.execute('DELETE FROM taches WHERE id_tache = ?', (id_tache,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('ReadTaches'))
 
 
 # ==========================================
