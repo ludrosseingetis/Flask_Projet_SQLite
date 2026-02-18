@@ -120,29 +120,31 @@ def ReadTaches():
     
     return render_template('read_data.html', data=data)
 
-@app.route('/ajouter_tache', methods=['GET', 'POST'])
+@app.route('/ajouter_tache', methods=['POST'])
 def ajouter_tache():
     if not est_authentifie():
         return redirect(url_for('authentification'))
+    
+    # On récupère les champs qui correspondent à ton CREATE TABLE
+    titre = request.form.get('titre')
+    description = request.form.get('description')
+    id_client = request.form.get('id_client')
 
-    # Si l'utilisateur valide le formulaire
-    if request.method == 'POST':
-        description = request.form['description']
-        date_echeance = request.form['date_echeance']
-        id_client = request.form['id_client']
-
-        conn = get_db2_connection()
-        conn.execute('INSERT INTO taches (description, date_echeance, id_client) VALUES (?, ?, ?)', 
-                     (description, date_echeance, id_client))
+    conn = get_db2_connection()
+    try:
+        # Note : 'created' se remplira tout seul grâce au DEFAULT CURRENT_TIMESTAMP
+        conn.execute('''
+            INSERT INTO taches (titre, description, id_client) 
+            VALUES (?, ?, ?)
+        ''', (titre, description, id_client))
         conn.commit()
+    except Exception as e:
+        print(f"Erreur SQL : {e}")
+        return f"Erreur de base de données : {e}", 500
+    finally:
         conn.close()
-        return redirect(url_for('ReadTaches'))
-
-    # Si l'utilisateur arrive juste sur la page (GET)
-    # Tu dois créer un fichier 'ajouter_tache.html' avec ton formulaire
-    return render_template('ajouter_tache.html')
-
-
+    
+    return redirect(url_for('ReadTaches'))
 # ==========================================
 # AUTHENTIFICATION
 # ==========================================
