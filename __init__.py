@@ -147,6 +147,22 @@ def ajouter_tache():
 
     # Si la méthode est GET (accès direct via l'URL), on affiche le formulaire
     return render_template('ajouter_tache.html')
+
+@app.route('/supprimer_tache/<int:id>', methods=['POST'])
+def supprimer_tache(id):
+    if not est_authentifie():
+        return redirect(url_for('authentification'))
+
+    conn = get_db2_connection()
+    try:
+        conn.execute('DELETE FROM taches WHERE id_tache = ?', (id,))
+        conn.commit()
+    except Exception as e:
+        print(f"Erreur lors de la suppression : {e}")
+    finally:
+        conn.close()
+    
+    return redirect(url_for('ReadTaches'))
 # ==========================================
 # AUTHENTIFICATION
 # ==========================================
