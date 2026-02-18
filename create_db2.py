@@ -7,7 +7,7 @@ with open('schema2.sql') as f:
 
 cur = connection.cursor()
 
-cur.execute("INSERT INTO clients (nom, prenom, adresse) VALUES (?, ?, ?)",('DUPONT', 'Emilie', '123, Rue des Lilas, 75001 Paris'))
+cur.execute("INSERT INTO clients (nom, prenom) VALUES (?, ?)",('DUPONT', 'Emilie'))
 
 
 connection.commit()
