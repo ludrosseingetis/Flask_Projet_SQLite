@@ -1,0 +1,12 @@
+<form action="{{ url_for('ajouter_tache') }}" method="POST">
+    <label>Description de la tâche :</label>
+    <input type="text" name="description" required>
+
+    <label>Date d'échéance :</label>
+    <input type="date" name="date_echeance" required>
+
+    <label>ID du Client :</label>
+    <input type="number" name="id_client" required>
+
+    <button type="submit">Ajouter la tâche</button>
+</form>
