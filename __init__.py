@@ -109,9 +109,9 @@ def ReadTaches():
     # On effectue une jointure SQL classique car les tables 'taches' et 'clients'
     # sont supposées être toutes les deux dans database2.db
     sql = """
-        SELECT taches.*, clients.nom, clients.prenom 
+        SELECT *
         FROM taches 
-        JOIN clients ON taches.id_client = clients.id
+        
     """
     
     cursor.execute(sql)
