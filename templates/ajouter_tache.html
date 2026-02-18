@@ -1,23 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
+    <meta charset="UTF-8">
     <title>Ajouter une tâche</title>
+    <style>
+        /* Style global (identique à la page liste pour la cohérence) */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Container du formulaire (la carte) */
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.5rem;
+        }
+
+        /* Layout du formulaire */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        /* Style des champs de saisie */
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box; /* Évite que le champ dépasse */
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            background-color: #fcfdfe;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Bouton Enregistrer */
+        button[type="submit"] {
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #2980b9;
+        }
+
+        button[type="submit"]:active {
+            transform: scale(0.98);
+        }
+
+        /* Lien de retour */
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+            color: #34495e;
+        }
+    </style>
 </head>
 <body>
-    <h2>Créer une nouvelle tâche</h2>
-    <form action="{{ url_for('ajouter_tache') }}" method="POST">
-        <p>
-            <label>Titre de la tâche (Obligatoire) :</label><br>
-            <input type="text" name="titre" required>
-        </p>
-        <p>
-            <label>Description :</label><br>
-            <textarea name="description" required></textarea>
-        </p>
-       
-        <button type="submit">Enregistrer la tâche</button>
-    </form>
-    <br>
-    <a href="{{ url_for('ReadTaches') }}">Retour à la liste</a>
+
+    <div class="form-card">
+        <h2>Créer une tâche</h2>
+        
+        <form action="{{ url_for('ajouter_tache') }}" method="POST">
+            <div class="form-group">
+                <label for="titre">Titre de la tâche :</label>
+                <input type="text" id="titre" name="titre" placeholder="Ex: Acheter du pain" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description :</label>
+                <textarea id="description" name="description" placeholder="Détails de la tâche..." required></textarea>
+            </div>
+
+            <button type="submit">Enregistrer la tâche</button>
+        </form>
+
+        <a href="{{ url_for('ReadTaches') }}" class="back-link">← Retour à la liste</a>
+    </div>
+
 </body>
 </html>
